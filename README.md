@@ -41,7 +41,7 @@ from one cluster to another cluster.
 
 ##### CloudSync API
 1. Start the Source:  
-    `
+    ```
     PUT /cloudsync/start
     {
         "mode" : "source",  
@@ -49,7 +49,7 @@ from one cluster to another cluster.
         "indices" : "logs-*",
         "location": "/mount/dx_backup",
     }
-    ` 
+    ```
     1. Other stores supported: aws-s3, gcp..
     1. This needs to be issued with every restart.
     
