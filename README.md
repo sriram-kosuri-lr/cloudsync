@@ -22,20 +22,20 @@ from one cluster to another cluster.
 
 1. Install cloudsync
     1. On both source and sink clusters.   
-    `
+    ```
     /usr/share/elasticsearch/bin/elasticsearch-plugin install file:///home/logrhythm/cloud-sync-1.0.0-SNAPSHOT.zip
-    `   
+    ```   
 1. Install GCS plugin
     1. Download GCS plugin from: https://artifacts.elastic.co/downloads/elasticsearch-plugins/repository-gcs/repository-gcs-5.6.3.zip
     1. On both source and sink clusters.  
-    `
+    ```
     bin/elasticsearch-plugin install file:///home/logrhythm/hack/repository-gcs-5.6.3.zip
-    `
+    ```
     1. Follow steps from: https://www.elastic.co/guide/en/elasticsearch/plugins/5.6/repository-gcs-usage.html 
     1. Adding GCS creds to the Elasticsearch keystore. (On Source)
-     ` 
+     ``` 
      /usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /gcs/my_file.json
-     `
+     ```
     1. If Sink cluster is on GCP, it doesnt needs GCS creds in Elasticsearch keystore.
         
 
@@ -54,19 +54,19 @@ from one cluster to another cluster.
     1. This needs to be issued with every restart.
     
 1. Start the Sink:
-    `
+    ```
     PUT /cloudsync/start
     {
         "mode" : "sink",
         "store" : "fs",
         "location": "/mount/dx_backup",
     }
-    `
+    ```
 
 1. Curl examples for 'filesystem' store. 
 
     1. Start Source
-    `
+    ```
     curl -X POST "localhost:9200/cloudsync/start" -H 'Content-Type: application/json' -d'
     {
       "mode": "source",
@@ -74,10 +74,10 @@ from one cluster to another cluster.
       "indices": "logs",
       "location": "/opt/lr/cloudsync"
     }'
-    `    
+    ```    
     1. Start Sink
     
-    `
+    ```
     curl -X POST "localhost:9200/cloudsync/start" -H 'Content-Type: application/json' -d'
     {
         "mode": "sink",
@@ -85,10 +85,10 @@ from one cluster to another cluster.
         "indices": "logs",
         "location": "/opt/lr/cloudsync"
     }'
-    `
+    ```
 1. Curl examples for 'gcs' store 
 
-    `
+    ```
     curl -X POST "localhost:9200/cloudsync/start" -H 'Content-Type: application/json' -d'
     {
       "mode": "source",
@@ -96,8 +96,9 @@ from one cluster to another cluster.
       "indices": "logs",
       "location": "dx_cloud"
     }'
-    `
-    `
+    ```
+    
+    ```
     curl -X POST "localhost:9200/cloudsync/start" -H 'Content-Type: application/json' -d'
     {
       "mode": "sink",
@@ -105,31 +106,39 @@ from one cluster to another cluster.
       "indices": "logs",
       "location": "dx_cloud"
     }'
-    `
+    ```
 
 
 1. Sync Status 
 
-    `GET /cloudsync/status`
+    ```
+    GET /cloudsync/status
+    ```
 
-    `curl localhost:9200/cloudsync/status`
+    ```
+    curl localhost:9200/cloudsync/status
+    ```
 
 1. Stop Source
-    `POST /cloudsync/stop`
+    ```
+    POST /cloudsync/stop
+    ```
 
 1. Stop Sink
-    `POST /cloudsync/stop`
+    ```
+    POST /cloudsync/stop
+    ```
 
 
 #### Elasticsearch Snapshot & Restore
 *Quick Reference*
 
 1. Verify repository is present
-    `
+    ```
     curl -X POST "localhost:9200/_snapshot/dx_backup/_verify"
-    `
+    ```
 1. Create repository
-    `
+    ```
     curl -XPUT 'http://localhost:9200/_snapshot/dx_backup' -H 'Content-Type: application/json' -d '{
         "type": "fs",
         "settings": {
@@ -137,16 +146,16 @@ from one cluster to another cluster.
             "compress": true
         }
     }'
-    `
+    ```
     
 1. Delete repository 
   1. All snapshots must be deleted before this operation)
-    `
+    ```
     curl -X DELETE "localhost:9200/_snapshot/dx_backup"
-    `   
+    ```   
 
 1. Snapshot an index:
-    `
+    ```
     curl -X PUT "localhost:9200/_snapshot/dx_backup/snapshot_1" -H 'Content-Type: application/json' -d'
     {
     
@@ -155,19 +164,27 @@ from one cluster to another cluster.
       "include_global_state": false,
       "chunk_size": "10m"
     }'
-    `
+    ```
 
 2. Check indexInfo status: 
-    `curl -X GET "localhost:9200/_snapshot/dx_backup/snapshot_1/_status?pretty"`
+    ```
+    curl -X GET "localhost:9200/_snapshot/dx_backup/snapshot_1/_status?pretty"
+    ```
 
 3. Delete a indexInfo: 
-    `curl -X DELETE "localhost:9200/_snapshot/dx_backup/snapshot_1"`
+    ```
+    curl -X DELETE "localhost:9200/_snapshot/dx_backup/snapshot_1"
+    ```
 
 4. Restore a indexInfo: 
-    `curl -X POST "localhost:9201/_snapshot/dx_backup/snapshot_1/_restore"`
+    ```
+    curl -X POST "localhost:9201/_snapshot/dx_backup/snapshot_1/_restore"
+    ```
 
 5. List of all utils  
-    `curl -X GET "localhost:9200/_snapshot/dx_backup/_all?pretty"`
+    ```
+    curl -X GET "localhost:9200/_snapshot/dx_backup/_all?pretty"
+    ```
 
 
 ##### Developer Notes
